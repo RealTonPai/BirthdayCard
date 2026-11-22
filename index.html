@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Special Postcard for You 💌</title>
+  <style>
+    :root {
+      --bg-gradient-start: #fbf9f5;
+      --bg-gradient-end: #f1ebd9;
+      --primary-color: #ff6b81;
+      --primary-hover: #ff4757;
+      --secondary-color: #2ed573;
+      --secondary-hover: #26af5f;
+      --text-dark: #2f3542;
+      --text-muted: #747d8c;
+      --card-bg: #ffffff;
+      --border-color: #f1f2f6;
+      --shadow: 0 15px 35px rgba(0,0,0,0.08);
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      color: var(--text-dark);
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Minimal Header */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Centered Presentation Container */
+    .presentation-container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Interactive Postcard Elements */
+    .postcard-wrapper {
+      perspective: 1500px;
+      -webkit-perspective: 1500px;
+      width: 100%;
+      height: 320px;
+      position: relative;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .postcard-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .postcard-wrapper.is-flipped .postcard-inner {
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+    }
+
+    .postcard-face {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 16px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Front side (Envelope or decorative style cover) */
+    .postcard-front {
+      background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+      color: #fff;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+
+    .postcard-front::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      border: 1px dashed rgba(255,255,255,0.4);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .stamp-spot {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      width: 50px;
+      height: 60px;
+      border: 2px dashed rgba(255,255,255,0.6);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .postcard-front h3 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .postcard-front p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .click-hint {
+      position: absolute;
+      bottom: 25px;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.25);
+      padding: 6px 14px;
+      border-radius: 20px;
+      animation: pulse 2s infinite;
+      letter-spacing: 0.5px;
+    }
+
+    /* Back side (Written message) */
+    .postcard-back {
+      background: #faf9f6;
+      color: #2f3542;
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      border: 1px solid #e0d9cc;
+    }
+
+    .postcard-back::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px solid rgba(0,0,0,0.04);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    /* Message area with vintage lines */
+    .message-side {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      padding-right: 10px;
+    }
+
+    .wish-text {
+      font-family: "Georgia", serif;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #3f4552;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-y: auto;
+      max-height: 240px;
+    }
+
+    /* Right side with stamp & address lines */
+    .address-side {
+      border-left: 1px solid rgba(0,0,0,0.08);
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .actual-stamp {
+      align-self: flex-end;
+      width: 55px;
+      height: 65px;
+      background: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      padding: 2px;
+      border-radius: 2px;
+    }
+
+    .stamp-inner {
+      width: 100%;
+      height: 100%;
+      border: 1px dashed #ff4757;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .address-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: auto;
+      margin-bottom: 20px;
+    }
+
+    .address-line {
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+      font-size: 0.85rem;
+      padding-bottom: 4px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    /* Playful Subtle Actions Under Card */
+    .postcard-actions {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 440px;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .btn-flip {
+      background: #2f3542;
+      color: white;
+    }
+
+    .btn-flip:hover {
+      background: #1e222b;
+    }
+
+    .btn-gimmick {
+      background: #a55eea;
+      color: white;
+    }
+
+    .btn-gimmick:hover {
+      background: #8854d0;
+    }
+
+    .btn-music {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-music:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Collapsible Creator/Customizer Panel */
+    .customize-trigger-container {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .btn-toggle-customize {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-toggle-customize:hover {
+      color: var(--primary-color);
+    }
+
+    .config-panel {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      display: none; /* Hidden by default for recipients */
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 500px;
+      margin-top: 24px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .config-panel.is-visible {
+      display: flex;
+    }
+
+    .config-panel h2 {
+      font-size: 1.15rem;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 6px;
+      margin-bottom: 4px;
+      color: var(--text-dark);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .form-group input, 
+    .form-group textarea, 
+    .form-group select {
+      font-family: inherit;
+      padding: 8px 12px;
+      border: 1px solid #ced6e0;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, 
+    .form-group textarea:focus, 
+    .form-group select:focus {
+      border-color: var(--primary-color);
+    }
+
+    .color-presets {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .color-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px #ced6e0;
+      transition: transform 0.2s;
+    }
+
+    .color-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .color-btn.active {
+      box-shadow: 0 0 0 2px var(--text-dark);
+    }
+
+    .btn-copy {
+      background: var(--secondary-color);
+      color: white;
+      margin-top: 10px;
+    }
+
+    .btn-copy:hover {
+      background: var(--secondary-hover);
+    }
+
+    /* Confetti Gimmick Overlay */
+    #confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0.8;
+      animation: fall linear forwards;
+    }
+
+    /* Keyframes */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.03); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(360deg);
+      }
+    }
+
+    /* Modal for Shareable link */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .modal h3 {
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+
+    .modal p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .share-link-box {
+      display: flex;
+      gap: 8px;
+      background: #f1f2f6;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .share-link-text {
+      flex: 1;
+      font-family: monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      color: var(--text-dark);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      border: none;
+      background: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>💌 You've Received a Special Postcard!</h1>
+    <p>Click the card to open and read the secret message.</p>
+  </header>
+
+  <!-- Clean, Centered Presentation View -->
+  <div class="presentation-container">
+    <div class="postcard-wrapper" id="postcard">
+      <div class="postcard-inner">
+        
+        <!-- Front Side -->
+        <div class="postcard-face postcard-front" id="card-front">
+          <div class="stamp-spot" id="front-stamp-preview">🎂</div>
+          <h3 id="front-recipient-preview">For Kawo</h3>
+          <p>You have received a private postcard!</p>
+          <div class="click-hint">Click to flip and open ✉️</div>
+        </div>
+
+        <!-- Back Side -->
+        <div class="postcard-face postcard-back">
+          <div class="message-side">
+            <div class="wish-text" id="back-message-preview">Happy Birthday Kawo
+
+Wish you a good luck and the best ⭐</div>
+          </div>
+          <div class="address-side">
+            <div class="actual-stamp">
+              <div class="stamp-inner" id="back-stamp-preview">🎂</div>
+            </div>
+            <div class="address-lines">
+              <div class="address-line" id="back-recipient-line">To: Kawo</div>
+              <div class="address-line">From: <span id="back-sender-line">Your Friend</span></div>
+              <div class="address-line" style="border:none; font-size:0.75rem; color:var(--text-muted); text-align:right;">Handcrafted ❤️</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Playful Interaction Buttons -->
+    <div class="postcard-actions">
+      <button class="btn btn-flip" id="flip-btn">🔄 Flip Card</button>
+      <button class="btn btn-gimmick" id="gimmick-btn">🎉 Celebrate!</button>
+      <button class="btn btn-music" id="music-btn">🎵 Play Music</button>
+    </div>
+  </div>
+
+  <!-- Subtle, Collapsed Creator Tool for the sender -->
+  <div class="customize-trigger-container">
+    <button class="btn-toggle-customize" id="toggle-customize-btn">⚙️ Personalize / Create another card</button>
+  </div>
+
+  <!-- Config panel: Hidden by default -->
+  <div class="config-panel" id="config-panel">
+    <h2>Personalize Postcard</h2>
+    
+    <div class="form-group">
+      <label for="recipient-input">Recipient Name</label>
+      <input type="text" id="recipient-input" placeholder="e.g. Dearest Sarah" value="Kawo">
+    </div>
+
+    <div class="form-group">
+      <label for="message-input">Your Wish / Message</label>
+      <textarea id="message-input" rows="5" placeholder="Write your heartfelt message here...">Happy Birthday Kawo&#10;&#10;Wish you a good luck and the best ⭐</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="sender-input">Sender Name</label>
+      <input type="text" id="sender-input" placeholder="e.g. Your Friend" value="Your Friend">
+    </div>
+
+    <div class="form-group">
+      <label>Select Cover Palette</label>
+      <div class="color-presets">
+        <button class="color-btn active" style="background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);" data-theme="sunset"></button>
+        <button class="color-btn" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);" data-theme="ocean"></button>
+        <button class="color-btn" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);" data-theme="peach"></button>
+        <button class="color-btn" style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);" data-theme="mint"></button>
+        <button class="color-btn" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);" data-theme="lavender"></button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="stamp-select">Select Stamp</label>
+      <select id="stamp-select">
+        <option value="🎂">🎂 Cake</option>
+        <option value="🎈">🎈 Balloon</option>
+        <option value="💖">💖 Heart</option>
+        <option value="🍀">🍀 Clover</option>
+        <option value="🌟">🌟 Star</option>
+      </select>
+    </div>
+
+    <button class="btn btn-copy" id="share-btn">🔗 Generate & Copy Shareable Link</button>
+  </div>
+
+  <div id="confetti-container"></div>
+
+  <!-- Modal for Shareable link -->
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal">
+      <button class="close-modal" id="close-modal-btn">✕</button>
+      <h3>Postcard Link Ready! 📬</h3>
+      <p>Send this special link to your recipient. They will see the customized card you prepared with your exact messages and colors in this clean, beautiful view!</p>
+      <div class="share-link-box">
+        <span class="share-link-text" id="share-url"></span>
+      </div>
+      <button class="btn btn-copy" id="copy-modal-url" style="width: 100%; margin-top: 0;">Copy URL to Clipboard</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Handcrafted Interactive Postcard ❤️</p>
+  </footer>
+
+  <script>
+    // Audio synthesis setup for fully self-contained background music
+    let audioCtx = null;
+    let musicInterval = null;
+    let isPlaying = false;
+    let hasStartedMusic = false;
+
+    // Simple birthday tune notes (frequencies) and durations
+    const melody = [
+      { f: 261.63, d: 300 }, // C4
+      { f: 261.63, d: 100 }, // C4
+      { f: 293.66, d: 400 }, // D4
+      { f: 261.63, d: 400 }, // C4
+      { f: 349.23, d: 400 }, // F4
+      { f: 329.63, d: 800 }, // E4
+      
+      { f: 261.63, d: 300 }, // C4
+      { f: 261.63, d: 100 }, // C4
+      { f: 293.66, d: 400 }, // D4
+      { f: 261.63, d: 400 }, // C4
+      { f: 392.00, d: 400 }, // G4
+      { f: 349.23, d: 800 }, // F4
+    ];
+
+    function playNote(freq, duration) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      
+      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration/1000);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration/1000);
+    }
+
+    function playCelebrateSound() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const now = audioCtx.currentTime;
+      
+      // Beautiful 4-note ascending major chord arpeggio for a celebratory cheer sound
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        
+        const startTime = now + (i * 0.08);
+        const duration = 0.4;
+        
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.12, startTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      });
+    }
+
+    function startMelody() {
+      const musicBtn = document.getElementById('music-btn');
+      if (isPlaying) return;
+      isPlaying = true;
+      musicBtn.textContent = '⏸ Pause Music';
+      musicBtn.style.background = '#2ed573';
+      let index = 0;
+      
+      function runMelody() {
+        if (!isPlaying) return;
+        const note = melody[index];
+        playNote(note.f, note.d);
+        index = (index + 1) % melody.length;
+        musicInterval = setTimeout(runMelody, note.d + 100);
+      }
+      runMelody();
+    }
+
+    function pauseMelody() {
+      const musicBtn = document.getElementById('music-btn');
+      clearInterval(musicInterval);
+      isPlaying = false;
+      musicBtn.textContent = '🎵 Play Music';
+      musicBtn.style.background = 'var(--primary-color)';
+    }
+
+    function toggleMusic() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (isPlaying) {
+        pauseMelody();
+      } else {
+        startMelody();
+      }
+    }
+
+    document.getElementById('music-btn').addEventListener('click', toggleMusic);
+
+    // Color theme setups
+    const themes = {
+      sunset: 'linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)',
+      ocean: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
+      peach: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+      mint: 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)',
+      lavender: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)'
+    };
+
+    // Live state
+    let activeTheme = 'sunset';
+
+    // Elements
+    const postcard = document.getElementById('postcard');
+    const recipientInput = document.getElementById('recipient-input');
+    const messageInput = document.getElementById('message-input');
+    const senderInput = document.getElementById('sender-input');
+    const stampSelect = document.getElementById('stamp-select');
+    
+    const frontRecipientPreview = document.getElementById('front-recipient-preview');
+    const frontStampPreview = document.getElementById('front-stamp-preview');
+    const backMessagePreview = document.getElementById('back-message-preview');
+    const backStampPreview = document.getElementById('back-stamp-preview');
+    const backRecipientLine = document.getElementById('back-recipient-line');
+    const backSenderLine = document.getElementById('back-sender-line');
+    const cardFront = document.getElementById('card-front');
+    const configPanel = document.getElementById('config-panel');
+    const toggleCustomizeBtn = document.getElementById('toggle-customize-btn');
+
+    // Toggle customizer visibility
+    toggleCustomizeBtn.addEventListener('click', () => {
+      configPanel.classList.toggle('is-visible');
+      if (configPanel.classList.contains('is-visible')) {
+        configPanel.scrollIntoView({ behavior: 'smooth' });
+        toggleCustomizeBtn.textContent = '✕ Hide Personalization Tool';
+      } else {
+        toggleCustomizeBtn.textContent = '⚙️ Personalize / Create another card';
+      }
+    });
+
+    // Sync input functions
+    function updateCardDetails() {
+      const recipient = recipientInput.value || "Kawo";
+      const message = messageInput.value || "Happy Birthday Kawo\n\nWish you a good luck and the best ⭐";
+      const sender = senderInput.value || "Your Friend";
+      const stamp = stampSelect.value;
+
+      frontRecipientPreview.textContent = `For ${recipient}`;
+      backRecipientLine.textContent = `To: ${recipient}`;
+      backSenderLine.textContent = sender;
+      backMessagePreview.textContent = message;
+      frontStampPreview.textContent = stamp;
+      backStampPreview.textContent = stamp;
+    }
+
+    recipientInput.addEventListener('input', updateCardDetails);
+    messageInput.addEventListener('input', updateCardDetails);
+    senderInput.addEventListener('input', updateCardDetails);
+    stampSelect.addEventListener('change', updateCardDetails);
+
+    // Theme Picker
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.color-btn.active').classList.remove('active');
+        btn.classList.add('active');
+        activeTheme = btn.getAttribute('data-theme');
+        cardFront.style.background = themes[activeTheme];
+      });
+    });
+
+    // Flip Control
+    let hasFlippedOnce = false;
+    function toggleFlip() {
+      postcard.classList.toggle('is-flipped');
+      if (!hasFlippedOnce && postcard.classList.contains('is-flipped')) {
+        hasFlippedOnce = true;
+        // Automatically celebrate on first open!
+        setTimeout(() => {
+          triggerConfetti();
+          playCelebrateSound();
+        }, 300);
+      }
+    }
+    postcard.addEventListener('click', toggleFlip);
+    document.getElementById('flip-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFlip();
+    });
+
+    // Celebrations Gimmick (Confetti generator)
+    function triggerConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#ff6b81', '#2ed573', '#1e90ff', '#ffa502', '#ff4757', '#7c5295'];
+      
+      for (let i = 0; i < 60; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        
+        // Random styles
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.transform = `scale(${Math.random() * 0.8 + 0.4})`;
+        
+        // Timing
+        const duration = Math.random() * 2 + 1.5;
+        confetti.style.animationDuration = duration + 's';
+        
+        container.appendChild(confetti);
+        
+        // Clean up
+        setTimeout(() => {
+          confetti.remove();
+        }, duration * 1000);
+      }
+    }
+    document.getElementById('gimmick-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerConfetti();
+      playCelebrateSound();
+    });
+
+    // State Persistence via URL Hash/Params so sharing works
+    function generateShareUrl() {
+      const params = new URLSearchParams();
+      params.set('to', recipientInput.value);
+      params.set('msg', messageInput.value);
+      params.set('from', senderInput.value);
+      params.set('theme', activeTheme);
+      params.set('stamp', stampSelect.value);
+      
+      return window.location.origin + window.location.pathname + '?' + params.toString();
+    }
+
+    // Modal elements
+    const shareModal = document.getElementById('share-modal');
+    const shareUrlSpan = document.getElementById('share-url');
+
+    document.getElementById('share-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const url = generateShareUrl();
+      shareUrlSpan.textContent = url;
+      shareModal.style.display = 'flex';
+    });
+
+    document.getElementById('close-modal-btn').addEventListener('click', () => {
+      shareModal.style.display = 'none';
+    });
+
+    document.getElementById('copy-modal-url').addEventListener('click', () => {
+      const textToCopy = shareUrlSpan.textContent;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const copyBtn = document.getElementById('copy-modal-url');
+        copyBtn.textContent = 'Copied! ✓';
+        copyBtn.style.background = '#2ed573';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy URL to Clipboard';
+          copyBtn.style.background = '';
+        }, 2000);
+      });
+    });
+
+    // Read incoming parameters to load customized card if sent
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('to') || params.has('msg') || params.has('from')) {
+        // Hide the customize toggle button for the recipient
+        const triggerContainer = document.querySelector('.customize-trigger-container');
+        if (triggerContainer) {
+          triggerContainer.style.display = 'none';
+        }
+        
+        // Load data from URL
+        recipientInput.value = params.get('to') || '';
+        messageInput.value = params.get('msg') || '';
+        senderInput.value = params.get('from') || '';
+        
+        const urlTheme = params.get('theme');
+        if (urlTheme && themes[urlTheme]) {
+          activeTheme = urlTheme;
+          cardFront.style.background = themes[urlTheme];
+          document.querySelector('.color-btn.active').classList.remove('active');
+          const matchedBtn = document.querySelector(`[data-theme="${urlTheme}"]`);
+          if (matchedBtn) matchedBtn.classList.add('active');
+        }
+
+        const urlStamp = params.get('stamp');
+        if (urlStamp) {
+          stampSelect.value = urlStamp;
+        }
+
+        updateCardDetails();
+      }
+
+      // Try autoplaying or cue it up for first interaction
+      attemptAutoplay();
+    });
+
+    function attemptAutoplay() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
+      const startOnInteraction = () => {
+        if (!hasStartedMusic) {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          startMelody();
+          hasStartedMusic = true;
+        }
+        document.removeEventListener('click', startOnInteraction);
+        document.removeEventListener('touchstart', startOnInteraction);
+      };
+
+      // Try playing immediately
+      audioCtx.resume().then(() => {
+        if (audioCtx.state === 'running') {
+          startMelody();
+          hasStartedMusic = true;
+        } else {
+          document.addEventListener('click', startOnInteraction);
+          document.addEventListener('touchstart', startOnInteraction);
+        }
+      }).catch(() => {
+        document.addEventListener('click', startOnInteraction);
+        document.addEventListener('touchstart', startOnInteraction);
+      });
+    }
+  </script>
+</body>
+</html>
